@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PWA-Freeview-NZ")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2a33edc27bb275256d62c48dc2fabddfd83bead3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+532bdffb4bc0c4965490ea01c2e0f15fed594a43")]
 [assembly: System.Reflection.AssemblyProductAttribute("PWA-Freeview-NZ")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PWA-Freeview-NZ")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
