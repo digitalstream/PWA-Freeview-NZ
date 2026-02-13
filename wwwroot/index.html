@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="Description" content="LIVE Freeview New Zealand TV streams" />
+    <!-- Bootstrap CSS (Optional if not used elsewhere) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
+    />
+    <!-- Video.js CSS (Match JS version) -->
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <!-- Or 8.22.0 if using that JS -->
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="canonical" href="https://freeview.bettermediahub.com/" />
+    <!-- Your Custom Stylesheet -->
+    <link rel="stylesheet" href="cs/styles.css" />
+    <!-- Favicons, Fonts, Manifest etc. -->
+    <link rel="icon" sizes="192x192" href="images/icons/tv-icon_192.png" />
+    <link rel="icon" sizes="128x128" href="images/icons/tv-icon_128.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#EE1F27" />
+    <title>NZ Freeview</title>
+  </head>
+  <body>
+    <!-- Clean Video Tag - NO controls, NO data-setup -->
+    <video
+      id="videoScreen"
+      class="video-js vjs-default-skin vjs-big-play-centered"
+      preload="auto"
+      playsinline
+    >
+      <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a
+        web browser that supports HTML5 video.
+      </p>
+    </video>
+
+    <!-- NEW: Temporary Message Banner -->
+    <div id="temporaryMessage"></div>
+
+    <!-- Overlay Structure -->
+    <div id="overlay">
+      <div class="top-bar">
+        <!-- NEW: Hamburger Menu Button -->
+        <i class="fa fa-bars" id="menuButton" onclick="toggleMenu()"></i>
+        <img src="images/freeview.png" id="topBarHeading" alt="Freeview NZ" />
+        <!-- Stop button MOVED HERE -->
+        <i
+          class="fa fa-stop-circle"
+          id="stopButton"
+          onclick="stopPlaying()"
+        ></i>
+      </div>
+
+      <!-- Channel Info Container -->
+      <div id="channelInfo">
+        <!-- EPG content dynamically generated here -->
+      </div>
+    </div>
+
+    <!-- BMH Link/Button MOVED OUTSIDE of #overlay for fixed positioning -->
+    <a href="https://bettermediahub.com/" target="_blank" rel="noopener">
+      <img
+        src="images/icons/favicon512-black.png"
+        class="bmhButton"
+        alt="BetterMediaHub"
+      />
+    </a>
+
+    <!-- NEW: Navigation/Settings Panel Structure (Replaces old About Panel) -->
+    <div id="navPanel">
+      <div class="nav-header">
+        <span id="navTitle">Navigation</span>
+        <i
+          class="fa fa-window-close"
+          id="closeNavButton"
+          onclick="toggleMenu(false)"
+        ></i>
+      </div>
+      <div id="navContent">
+        <!-- Content will be dynamically populated by setupNavPanel() in app.js -->
+      </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <!-- Dependencies (jQuery/Popper/Bootstrap JS - Optional if not needed by app.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    <!-- Video.js Script (Match CSS version) -->
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <!-- Or 8.22.0 -->
+    <!-- Your Application Script -->
+    <script src="js/app.js" defer></script>
+  </body>
+</html>

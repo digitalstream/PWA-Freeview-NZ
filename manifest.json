@@ -1,0 +1,53 @@
+{
+  "name": "Better NZ Freeview",
+  "short_name": "NZ Freeview",
+  "id": "/",
+  "icons": [
+    {
+      "src": "images/icons/tv-icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icons/tv-icon_256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icons/tv-icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "splash_screen": {
+    "image": "images/icons/wide.png",
+    "background_color": "#ffffff",
+    "description": "New Zealand Freeview Television"
+  },
+  "screenshots": [
+    {
+      "src": "images/icons/splashMobile.png",
+      "sizes": "502x1032",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icons/splashDesktop.png",
+      "sizes": "1292x845",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "images/icons/splash-320.png",
+      "sizes": "320x320",
+      "type": "image/png",
+      "label": "320x320 form factor"
+    }
+  ],
+  "display_override": ["fullscreen", "window-controls-overlay"],
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#EE1F27",
+  "background_color": "#EE1F27",
+  "description": "New Zealand Freeview Television"
+}
