@@ -71,3 +71,7 @@ The Windows authentication checks use a temporary users fixture and real ASP.NET
 Browser checks have covered actual HLS playback, simulated authentication transitions, preview expiry, reload persistence, keyboard focus, dialogs and both orientations. Safari's installed-app sizing also needs validation on a physical device.
 
 Channel logos, programme listings and media remain with their respective owners. This repository does not distribute media or grant access to third-party streams.
+
+## Licence
+
+The original application code is licensed under the [MIT Licence](LICENSE). Third-party libraries retain their own licences. Broadcaster logos, programme listings and streams are not covered by this code licence and remain subject to their owners' terms.
