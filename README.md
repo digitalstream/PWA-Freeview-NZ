@@ -2,6 +2,16 @@
 
 A television streaming PWA built with vanilla JavaScript, a custom programme-guide API and ASP.NET session endpoints. This repository contains the application code; deployment-specific guide and stream URLs stay in an ignored local configuration file.
 
+## Live product
+
+**[Open NZ Freeview](https://freeview.bettermediahub.com/)**
+
+The live app is available to explore as a guest. TVNZ channels have a shared two-minute preview; sports are available after sign-in. It can also be installed as a PWA from a supported browser.
+
+| Programme guide | Engineering About |
+| --- | --- |
+| <img src="docs/screenshots/guide.png" alt="NZ Freeview mobile programme guide with current and upcoming programmes" width="300" /> | <img src="docs/screenshots/engineering-about.png" alt="Engineering About sheet explaining the application architecture and guide API" width="300" /> |
+
 ## Engineering overview
 
 - HTML5 video with Video.js for HLS and dash.js for MPEG-DASH. Player libraries load on demand; channel changes dispose the old player and ignore stale callbacks.
