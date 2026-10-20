@@ -1,0 +1,30 @@
+@freeview = https://freeview.bettermediahub.com
+@username =
+@password =
+
+### Check the current server session (read-only)
+GET {{freeview}}/auth-status.ashx
+X-Freeview-Request: 1
+
+### Sign in: set username/password above locally; do not share saved credentials
+POST {{freeview}}/login.ashx
+X-Freeview-Request: 1
+Content-Type: application/x-www-form-urlencoded
+
+username={{username}}&password={{password}}
+
+### Check status after sign-in; use the same HTTP client cookie jar
+# Login sets __Host-FreeviewLogin with a fixed expiry 30 days ahead.
+# To test restoration, remove only ASP.NET_SessionId from the cookie jar;
+# keep __Host-FreeviewLogin, then run this request again.
+GET {{freeview}}/auth-status.ashx
+X-Freeview-Request: 1
+
+### Sign out of this HTTP client's session
+POST {{freeview}}/logout.ashx
+X-Freeview-Request: 1
+
+### Invalid remembered-login cookie must return isLoggedIn=false
+GET {{freeview}}/auth-status.ashx
+X-Freeview-Request: 1
+Cookie: __Host-FreeviewLogin=invalid-token

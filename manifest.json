@@ -1,7 +1,7 @@
 {
   "name": "Better NZ Freeview",
   "short_name": "NZ Freeview",
-  "id": "/",
+  "id": "https://freeview.bettermediahub.com/",
   "icons": [
     {
       "src": "images/icons/tv-icon_192.png",
@@ -44,10 +44,10 @@
     }
   ],
   "display_override": ["fullscreen", "window-controls-overlay"],
-  "scope": "/",
-  "start_url": "/",
+  "scope": "https://freeview.bettermediahub.com/",
+  "start_url": "https://freeview.bettermediahub.com/",
   "display": "standalone",
   "theme_color": "#EE1F27",
-  "background_color": "#EE1F27",
+  "background_color": "#ed1c22",
   "description": "New Zealand Freeview Television"
 }

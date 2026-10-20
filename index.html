@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="Description" content="LIVE Freeview New Zealand TV streams" />
+    <!-- Bootstrap CSS (Optional if not used elsewhere) -->
+     <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
+    />
+    <!-- Video.js CSS (Match JS version) -->
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <!-- Or 8.22.0 if using that JS -->
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="canonical" href="https://freeview.bettermediahub.com/" />
+    <!-- Your Custom Stylesheet -->
+    <link rel="stylesheet" href="styles.css?v=20261021-2" />
+    <!-- Favicons, Fonts, Manifest etc. -->
+    <link rel="icon" sizes="192x192" href="images/icons/tv-icon_192.png" />
+    <link rel="icon" sizes="128x128" href="images/icons/tv-icon_128.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#EE1F27" />
+    <title>NZ Freeview</title>
+  </head>
+  <body>
+<!-- Player Host -->
+<div id="playerHost" class="player-host"></div>
+
+    <!-- NEW: Temporary Message Banner -->
+    <div id="temporaryMessage"></div>
+
+    <!-- Overlay Structure -->
+    <div id="overlay">
+      <div class="top-bar">
+        <!-- NEW: Hamburger Menu Button -->
+        <button type="button" class="icon-button" id="menuButton" onclick="toggleMenu()" aria-label="Open menu" aria-controls="navPanel" aria-expanded="false"><i class="fa fa-bars" aria-hidden="true"></i></button>
+        <img src="images/freeview.png" id="topBarHeading" alt="Freeview NZ" />
+        <!-- Stop button MOVED HERE -->
+        <button type="button" class="icon-button" id="stopButton" onclick="stopPlaying()" aria-label="Stop playback"><i class="fa fa-stop-circle" aria-hidden="true"></i></button>
+      </div>
+
+      <div id="guideStatus" class="guide-status" role="status" aria-live="polite" hidden>
+        <span id="guideStatusText"></span>
+        <button id="retryGuideButton" type="button" onclick="retryGuide()" hidden>Retry now</button>
+      </div>
+
+      <!-- Channel Info Container -->
+      <div id="channelInfo">
+        <!-- EPG content dynamically generated here -->
+      </div>
+    </div>
+
+    <!-- BMH Link/Button MOVED OUTSIDE of #overlay for fixed positioning -->
+    <a href="https://bettermediahub.com/" target="_blank" rel="noopener">
+      <img
+        src="images/icons/favicon512-black.png"
+        class="bmhButton"
+        alt="BetterMediaHub"
+      />
+    </a>
+
+    <!-- Account drawer -->
+    <div id="navBackdrop" class="panel-backdrop" hidden></div>
+    <div id="navPanel" role="dialog" aria-modal="true" aria-labelledby="navTitle" aria-hidden="true" inert>
+      <div class="nav-header">
+        <div><p class="panel-eyebrow">NZ FREEVIEW</p><h2 id="navTitle">Menu</h2></div>
+        <button type="button" class="icon-button panel-close" id="closeNavButton" onclick="toggleMenu(false)" aria-label="Close menu">&times;</button>
+      </div>
+      <div id="navContent">
+        <!-- Account content is populated by setupNavPanel(). -->
+      </div>
+    </div>
+
+    <dialog id="aboutDialog" aria-labelledby="aboutTitle">
+      <header class="about-header"><div><p class="panel-eyebrow">BETTER MEDIA HUB</p><h2 id="aboutTitle">About NZ Freeview</h2></div><button type="button" class="icon-button panel-close" id="closeAboutButton" aria-label="Close About" autofocus>&times;</button></header>
+      <div class="about-content">
+        <p class="about-tagline">A television streaming PWA combining adaptive video, a custom programme-guide API and session-aware channel access.</p>
+
+        <section class="about-section">
+          <h3>Application architecture</h3>
+          <p>Built with <strong>HTML, CSS and vanilla JavaScript</strong>, with separate scripts for guide data, rendering, playback, authentication and panels. A central configuration maps channel names, guide IDs, numbering, logos and stream overrides. Guide rows are reused by channel ID, updating text in place rather than rebuilding the entire list each minute.</p>
+          <div class="about-badges"><span>Vanilla JavaScript</span><span>DOM reuse</span><span>Configuration mapping</span></div>
+        </section>
+
+        <section class="about-section">
+          <h3>XMLTV guide pipeline</h3>
+          <p>A custom <strong>C# / ASP.NET Core API</strong> loads XMLTV schedules into a channel index and serves a compact JSON summary of current and upcoming programmes. The app polls that summary every minute and caches playlist metadata for 30 minutes. Schedule times are normalised to Unix timestamps; channel aliases link different source names. The +1 channels use their own delayed streams and API listings.</p>
+          <div class="about-badges"><span>ASP.NET Core</span><span>XMLTV</span><span>REST / JSON</span><span>Batch requests</span></div>
+        </section>
+
+        <section class="about-section">
+          <h3>Streaming lifecycle</h3>
+          <p><strong>HTML5 video</strong> is managed through <strong>Video.js for HLS</strong> and <strong>dash.js for MPEG-DASH</strong>, with player libraries loaded on demand. Channel changes dispose the previous player and invalidate its callbacks so late events cannot interrupt a newer stream. The DASH path also supports configuring a Widevine licence server through an ASP.NET proxy.</p>
+          <div class="about-badges"><span>HLS</span><span>MPEG-DASH</span><span>Video.js</span><span>dash.js</span></div>
+        </section>
+
+        <section class="about-section">
+          <h3>Recovery and playback monitoring</h3>
+          <p>Guide requests are shared while in flight, with <strong>exponential retry delays</strong> and the last successful listings retained in memory. Playback monitoring checks the media clock as well as buffering events. Advancing video cancels the stall timer; prolonged buffering shows a notice while allowing the player to recover. Startup failures and fatal playback errors follow a separate cleanup path.</p>
+          <div class="about-badges"><span>Request deduplication</span><span>Backoff</span><span>Media events</span></div>
+        </section>
+
+        <section class="about-section">
+          <h3>Authentication and preview policy</h3>
+          <p><strong>C# ASP.NET handlers on IIS</strong> validate POSTed credentials against the shared user file and issue an encrypted, Secure, HttpOnly, SameSite login cookie valid for 30 days. It restores the server session after reopening the app; signing out clears it, and account-file changes invalidate it. The app checks session status to control sports visibility. TVNZ guest previews share a two-minute window and a 30-minute cooldown, persisted in <strong>localStorage</strong> across reloads and communicated between tabs. Signing in cancels the preview timer; signing out stops restricted playback. These browser controls demonstrate the access policy; they do not protect the upstream stream URLs.</p>
+          <div class="about-badges"><span>ASP.NET sessions</span><span>HTTP cookies</span><span>localStorage</span><span>Storage events</span></div>
+        </section>
+
+        <section class="about-section">
+          <h3>Mobile layout and PWA caching</h3>
+          <p><strong>Dynamic viewport units</strong>, edge-to-edge layout and safe-area insets keep video full size while positioning controls around screen cutouts. Playback switches the theme colour to black. A web app manifest supports installation, while a <strong>service worker</strong> revalidates static assets and falls back to saved copies when the network fails. Video, guide API and session requests bypass that static cache. The About sheet uses a native dialog; the account drawer manages keyboard focus.</p>
+          <div class="about-badges"><span>Service worker</span><span>Cache Storage</span><span>CSS safe areas</span><span>Native dialog</span></div>
+        </section>
+
+        <section class="about-section">
+          <h3>Verification</h3>
+          <p>Regression checks use the <strong>Node.js test runner</strong> and isolated JavaScript contexts to exercise guide mapping, retries, buffering, sessions and preview deadlines. Browser checks combine real HLS playback with simulated authentication responses to verify channel visibility, login/logout transitions and portrait/landscape layouts.</p>
+          <div class="about-badges"><span>node:test</span><span>VM contexts</span><span>Browser checks</span></div>
+        </section>
+
+        <a class="about-link" href="https://bettermediahub.com/" target="_blank" rel="noopener">Visit Better Media Hub <span aria-hidden="true">↗</span></a>
+      </div>
+    </dialog>
+
+    <!-- SCRIPTS -->
+     <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+navigator.serviceWorker
+  .register('/service-worker.js?v=20261021-2')
+  .then(function (registration) {
+    console.log('ServiceWorker registration successful:', registration.scope)
+
+    registration.update()
+  })
+  .catch(function (error) {
+    console.error('ServiceWorker registration failed:', error)
+  })
+    })
+  }
+</script>
+    <!-- Application Scripts -->
+    <script src="js/config.js?v=20261021-2" defer></script>
+    <script src="js/config.local.js?v=20261021-2" defer></script>
+    <script src="js/proxy.js?v=20261021-2" defer></script>
+    <script src="js/auth.js?v=20261021-2" defer></script>
+    <script src="js/access.js?v=20261021-2" defer></script>
+    <script src="js/panels.js?v=20261021-2" defer></script>
+    <script src="js/player.js?v=20261021-2" defer></script>
+    <script src="js/hls-player.js?v=20261021-2" defer></script>
+    <script src="js/mpd-player.js?v=20261021-2" defer></script>
+    <script src="js/guide-api.js?v=20261021-2" defer></script>
+    <script src="js/guide.js?v=20261021-2" defer></script>
+    <script src="js/app.js?v=20261021-2" defer></script>
+  </body>
+</html>

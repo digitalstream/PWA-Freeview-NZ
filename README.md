@@ -1,67 +1,63 @@
 # NZ Freeview PWA
 
-A private Progressive Web App (PWA) for browsing New Zealand Freeview channels and TV listings.
+A television streaming PWA built with vanilla JavaScript, a custom programme-guide API and ASP.NET session endpoints. This repository contains the application code; deployment-specific guide and stream URLs stay in an ignored local configuration file.
 
-This is an intentionally lightweight PWA.
+## Engineering overview
 
-> **Note:** This repository is **private** and intended for personal use only.
+- HTML5 video with Video.js for HLS and dash.js for MPEG-DASH. Player libraries load on demand; channel changes dispose the old player and ignore stale callbacks.
+- Guide API integration with a compact batch request each minute, playlist metadata cached for 30 minutes, explicit channel aliases and guide-ID mappings, and independent +1 schedules.
+- Guide rows reused by channel ID, safe text updates, request deduplication and exponential retries while retaining the last successful listings in memory.
+- Buffering detection based on actual playback progress. Temporary stalls can recover without the app closing the player.
+- C# ASP.NET handlers on IIS validate the private users file. An encrypted, Secure, HttpOnly, SameSite cookie restores login for up to 30 days.
+- Guests can see the Freeview channels. TVNZ channels share a two-minute preview and a 30-minute cooldown; sports appear after sign-in.
+- Responsive portrait and landscape layouts, safe-area spacing and dedicated standalone-PWA sizing. A service worker revalidates static assets and provides a saved-file fallback; video, guide API and authentication requests bypass that cache.
 
-## Features
+The guest preview is a browser policy. Keeping URLs outside Git also does not conceal URLs delivered to a viewer's browser. Enforcing access to the actual media requires protection at the streaming server.
 
-- **TV Guide:** Browse upcoming programs for major NZ channels (TVNZ 1, TVNZ 2, Three, Prime, Whakaata Maori, etc.).
-- **Live Streaming:** Direct access to official channel streams (where supported).
-- **PWA Capabilities:**
-  - Installable on Mobile (iOS/Android) and Desktop.
-  - Offline fallback support.
-  - Fast loading and touch-optimized interface.
+## Private configuration
 
-## Tech Stack
+1. Copy the example settings:
 
-- **Framework:** [React / Vue / Svelte]
-- **Build Tool:** [Vite / Webpack]
-- **Styling:** [Tailwind CSS / CSS]
-- **Deployment:** [Vercel / Netlify / GitHub Pages]
+   ```powershell
+   Copy-Item js/config.local.example.js js/config.local.js
+   ```
 
-## Getting Started
+2. Edit `js/config.local.js` with your guide API address and authorised stream URLs. The example uses reserved `.example` addresses.
+3. Keep that local file on the deployment server. It is loaded after `js/config.js` and must never be committed.
 
-### Prerequisites
+The development copy can retain its real local settings while the repository uses empty defaults and examples. Missing private configuration does not fall back to the playlist URLs for channels with required overrides.
 
-- Node.js (Latest LTS recommended)
-- npm or yarn
+`App_Data/`, `archive/`, build output, account files and local endpoint settings are excluded by `.gitignore`. Do not upload maintenance backups; they may contain previous configurations.
 
-### Installation
+## Hosting
 
-1. Clone the repository:
+The app uses classic ASP.NET `.ashx` handlers and `App_Code` on Windows IIS with .NET Framework 4.8 and HTTPS. It has no npm build step. This is the current application; the previous MVC project is kept only in the ignored local archive.
 
-   git clone https://github.com/digitalstream/PWA-Freeview-NZ.git
-   cd PWA-NZ-Freeview
+- Deploy the application files and your ignored `js/config.local.js` to the IIS application directory. Keep HTTPS redirection, session cookies and hidden-directory rules from `web.config`.
+- Supply the account file outside the web root. The path is configured in `App_Code/FreeviewAuthentication.cs`; use the existing private user-file format. Do not add real account data to this repository.
+- Connect a compatible guide API and allow your app's origin in its CORS policy. That API is hosted separately and its source is not part of this repository.
+- The browser interface can be previewed statically, but login and the ASP.NET proxy handlers require IIS; GitHub Pages does not run them.
 
-2. Install dependencies:
+Guide API contracts used by the adapter:
 
-   npm install
+| Request | Response |
+| --- | --- |
+| `GET /playlists/{playlistId}` | M3U channel metadata, guide IDs and stream directives |
+| `GET /guide/summary?channels={comma-separated-ids}` | JSON `channels` dictionary with `start`, `stop` and `title` programme fields |
+| `GET /guide/channel-programmes/{playlistId}/{guideId}` | Per-channel fallback when the summary endpoint returns 404 or 405 |
 
-3. Run the local development server:
+These paths are relative to `guideApiBaseUrl`. Compact programme timestamps are Unix seconds; the adapter also accepts offset-bearing XMLTV date strings from the older endpoint.
 
-   npm run dev
+## Verification
 
-### Building for Production
+Run the JavaScript checks with Node.js:
 
-To create the production build (generating the dist or build folder):
+```powershell
+node --test tests/*.test.cjs
+```
 
-    npm run build
+The Windows authentication checks use a temporary users fixture and real ASP.NET MachineKey protection. See [tests/README.md](tests/README.md) for the commands and [tests/requests.http](tests/requests.http) for manual session requests. Do not save real passwords in committed request examples.
 
-## How to Install (PWA)
+Browser checks have covered actual HLS playback, simulated authentication transitions, preview expiry, reload persistence, keyboard focus, dialogs and both orientations. Safari's installed-app sizing also needs validation on a physical device.
 
-- **Desktop (Chrome/Edge):** Click the "Install" icon on the right side of the address bar.
-- **iOS (iPhone/iPad):** Open in Safari -> Tap the "Share" button -> Select "Add to Home Screen".
-- **Android:** Open in Chrome -> Tap the three-dot menu -> Select "Install App".
-
-## Roadmap
-
-- [ ] Add Search functionality for specific shows.
-- [ ] Implement "Favorites" channel list.
-- [ ] Dark Mode toggle.
-
-## Disclaimer
-
-This project is for educational and personal private use only. All channel logos, EPG data, and stream content remain the property of their respective broadcasters (TVNZ, Warner Bros. Discovery NZ, etc.).
+Channel logos, programme listings and media remain with their respective owners. This repository does not distribute media or grant access to third-party streams.

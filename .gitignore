@@ -1,4 +1,25 @@
- node_modules/ 
- dist/ 
- *.log
- *.DS_Store
+# Local endpoints, accounts and secrets
+/js/config.local.js
+.env
+.env.*
+!.env.example
+users.txt
+**/users.txt
+*.pfx
+*.key
+*.pem
+
+# Local backups and the previous application
+/App_Data/
+/archive/
+
+# Generated output and editor files
+**/bin/
+**/obj/
+node_modules/
+dist/
+.vs/
+*.log
+Thumbs.db
+Desktop.ini
+.DS_Store
